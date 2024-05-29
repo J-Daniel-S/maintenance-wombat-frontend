@@ -105,3 +105,12 @@ a {
     color-scheme: dark;
   }
 }
+
+.fadeComponent {
+  opacity: 0;
+  transition: opacity 1.5s ease-in;
+}
+
+.fadeComponent.fadeVisible {
+  opacity: 1;
+}
