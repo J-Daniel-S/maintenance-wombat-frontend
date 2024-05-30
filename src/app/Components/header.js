@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ArrowDropDownFill } from "react-remix-icons";
 import M from "materialize-css";
 
 const Header = (props) => {
@@ -20,7 +19,6 @@ const Header = (props) => {
   const switchUser = () => {
     props.switchUser();
   };
-
   return (
     <React.Fragment>
       <ul id="dropdown1" className="dropdown-content">
@@ -39,16 +37,17 @@ const Header = (props) => {
       </ul>
       <nav>
         <div className={headerCss}>
-          <a href="#!" className="brand-logo">
-            All locations
-          </a>
+        {props.maintainerState ? 
+          <a className="brand-logo">
+            Maintenance Requests
+          </a> : <a className='brand-logo'>Submit Maintenance Request</a>}
           <ul className="right hide-on-med-and-down">
             <li>
               <a onClick={switchUser}>Switch user</a>
             </li>
-            <li>
+            {props.maintainerState && <React.Fragment><li>
               <a className="dropdown-trigger" href="#!" data-target="dropdown1">
-                Request Category
+                View By Request Category
               </a>
             </li>
             <li>
@@ -58,9 +57,9 @@ const Header = (props) => {
                 data-target="dropdown1"
                 ref={dropdownRef}
               >
-                Locations <ArrowDropDownFill />
+               View By Location
               </a>
-            </li>
+            </li></React.Fragment>}
           </ul>
         </div>
       </nav>

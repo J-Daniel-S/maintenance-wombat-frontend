@@ -1,21 +1,41 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 const Tasks = (props) => {
-    // useEffect to populate tasks.  new tag to check for new tasks for amber badge
-    const tasks = [];
-    let isNew = false;
+  // useEffect to populate tasks.  new tag to check for new tasks for amber badge
+  const tasks = [];
+  // placeholder
+  let isNew = false;
 
-    return(
-        <main className="collection">
-            <a href="#!" className="collection-item">{isNew && <span className="new badge amber">1</span>}Alan</a>
-            <a href="#!" className="collection-item"><span className="new badge amber">1</span>Also Alan</a>
-            <a href="#!" className="collection-item"><span className="new badge amber">1</span>Moar Alan</a>
-            <a href="#!" className="collection-item"><span className="new badge amber">1</span>Alan!</a>
-            <a href="#!" className="collection-item"><span className="new badge amber">1</span>Alaaaaan</a>
-            <a href="#!" className="collection-item"><span className="new badge amber">1</span>Haalan</a>
+  
+  const r1 = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Posuere lorem ipsum dolor sit amet consectetur adipiscing elit duis. Neque laoreet suspendisse interdum consectetur libero id faucibus.';
+  const r2 = 'A little more ' + r1;
+  const r3 = 'Even the most ' + r1;
 
-        </main>
-    );
+  const requests = [
+    { id: 1, location: "Lubbock", task: "task", description: r1 },
+    { id: 2, location: "San Antonio", task: "task", description: r2 },
+    { id: 3, location: "Houston", task: "task", description: r3 },
+  ];
+  
+  const clicked = r => {
+    props.setSelected(r);
+  };
+
+  return (
+    <main className="collection">
+      {requests.map((r) => (
+        <a
+          key={r.id}
+          href="#!"
+          className="collection-item"
+          onClick={() => clicked(r)}
+        >
+          {props.isNew && <span className="new badge amber">1</span>}
+          {r.location} : {r.task}
+        </a>
+      ))}
+    </main>
+  );
 };
 
 export default Tasks;

@@ -2,12 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import Tasks from "../Components/tasks";
+import Description from "../Components/maintainer/mDescription";
 
 const Maintainer = (props) => {
   const WS_URL = "wss://ws.postman-echo.com/raw";
   const [messageState, setMessageState] = useState([]);
   const [textState, setTextState] = useState("");
   const [initialState, setInitialState] = useState(true);
+  const [taskDescriptionState, setTaskDescription] = useState('');
+  const [selectedState, setSelectedState] = useState(false);
   // const { sendMessage, lastMessage, readyState} = useWebSocket(WS_URL, {
   //   share: false,
   //   shouldReconnect: () => true,
@@ -50,13 +53,24 @@ const Maintainer = (props) => {
     props.switchUser();
   };
 
+  const taskSelected = r => {
+    setSelectedState(true);
+    console.log(r);
+    setTaskDescription(r.description);
+  }
+
+  const clearSelection = () => {
+    setSelectedState(false);
+    setTaskDescription('');
+  }
+
   return (
     <React.Fragment>
       <section className="container">
-        {messageState}
-        <br></br>
+        {/* {messageState}
+        <br></br> */}
         <section>
-          <div>
+          {/* <div>
             <form className="col s12">
               <div className="row">
                 <div className="input-field col s12">
@@ -72,9 +86,14 @@ const Maintainer = (props) => {
                 </div>
               </div>
             </form>
-          </div>
-          <Tasks />
+          </div> */}
+          <Tasks setDescription={setTaskDescription} setSelected={taskSelected}/>
         </section>
+        {selectedState &&<div className="fade-in">
+          <Description description={taskDescriptionState} />
+          <a className="right clear-button" onClick={clearSelection}>Clear Selection</a>
+        </div>}
+
       </section>
     </React.Fragment>
   );
