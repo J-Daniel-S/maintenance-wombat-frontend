@@ -1,39 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 const Tasks = (props) => {
-  // useEffect to populate tasks.  new tag to check for new tasks for amber badge
-  const tasks = [];
-  // placeholder
-  let isNew = false;
+  useEffect(() => {}
 
+  , [props.setSelected]);
   
-  const r1 = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Posuere lorem ipsum dolor sit amet consectetur adipiscing elit duis. Neque laoreet suspendisse interdum consectetur libero id faucibus.';
-  const r2 = 'A little more ' + r1;
-  const r3 = 'Even the most ' + r1;
-
-  const requests = [
-    { id: 1, location: "Lubbock", task: "task", description: r1 },
-    { id: 2, location: "San Antonio", task: "task", description: r2 },
-    { id: 3, location: "Houston", task: "task", description: r3 },
-  ];
-  
-  const clicked = r => {
-    props.setSelected(r);
+  const clicked = t => {
+    props.setSelected(t);
   };
+
+  
 
   return (
     <main className="collection">
-      {requests.map((r) => (
+      {props.tasks.length !== 0 ? props.tasks.map((t) => (
         <a
-          key={r.id}
-          href="#!"
-          className="collection-item"
-          onClick={() => clicked(r)}
+          key={t.id}
+          className={t.isSelected ? "collection-item a-badge amber lighten-5" : "collection-item a-badge" }
+          onClick={() => clicked(t)}
         >
-          {props.isNew && <span className="new badge amber">1</span>}
-          {r.location} : {r.task}
+          {props.isNew && <span className="new badge amber">New!</span>}
+          {t.location} : {t.task}
         </a>
-      ))}
+      )): <a className= "collection-item a-badge">No tasks meet selected criteria</a>}
     </main>
   );
 };

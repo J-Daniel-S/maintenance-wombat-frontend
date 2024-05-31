@@ -1,6 +1,18 @@
 import React from "react";
 
 const Priority = (props) => {
+
+  let id = 0;
+  const prios = [
+    { prio: 'High', id: ++id},
+    { prio: 'Medium', id: ++id},
+    { prio: 'Low', id: ++id},
+  ]
+
+  const onChange = prio => {
+    props.setPrioState(prio);
+  }
+
   return (
     <React.Fragment>
       <section className="col s4">
@@ -8,33 +20,20 @@ const Priority = (props) => {
           <section className="card-margin">
             <span className="card-title">Priority</span>
             <form action="#" className="priority-card">
-              <p>
-                <label>
-                  <input
-                    className="with-gap"
-                    name="group1"
-                    type="radio"
-                  />
-                  <span>High</span>
-                </label>
-              </p>
-              <p>
-                <label>
-                  <input className="with-gap" name="group1" type="radio" />
-                  <span>Medium</span>
-                </label>
-              </p>
-              <p>
-                <label>
-                  <input
-                    className="with-gap"
-                    class="with-gap"
-                    name="group1"
-                    type="radio"
-                  />
-                  <span>Low</span>
-                </label>
-              </p>
+              {prios.map((p) => (
+                 <p key={p.id}>
+                 <label>
+                   <input
+                     className="with-gap"
+                     name="group1"
+                     type="radio"
+                     onChange={() => onChange(p.prio)}
+                     required
+                   />
+                   <span>{p.prio}</span>
+                 </label>
+               </p>
+              ))}
             </form>
           </section>
         </div>

@@ -126,6 +126,10 @@ a {
   padding: 0.5cm;
 }
 
+.a-badge:hover {
+  cursor: pointer;
+}
+
 .clear-button:hover {
   cursor: pointer;
   font-weight: bold;
@@ -133,6 +137,14 @@ a {
 
 .logout-button:hover {
   font-weight: bold;
+}
+
+.header-button {
+  min-width: 14em;
+}
+
+.header-button:hover {
+  cursor: pointer;
 }
 
 @keyframes fadeIn {

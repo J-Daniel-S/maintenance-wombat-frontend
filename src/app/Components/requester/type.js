@@ -1,6 +1,22 @@
 import React from "react";
 
 const Type = (props) => {
+
+  let id = 0;
+  const types = [
+    // will have to integrate id into messages received from the back end
+    { type: 'Electrical', id: ++id},
+    { type: 'Plumbing', id: ++id},
+    { type: 'IT', id: ++id},
+    { type: 'Structural', id: ++id},
+    { type: 'Cleanup', id: ++id},
+    { type: 'Other', id: ++id},
+  ]
+
+  const changed = type => {
+    props.setTypeState(type);
+  }
+
   return (
     <React.Fragment>
       <section className="col s4">
@@ -8,51 +24,20 @@ const Type = (props) => {
           <section className="card-margin">
             <span className="card-title">Request Type</span>
             <form action="#" className="type-card">
-              <p>
-                <label>
-                  <input
-                    className="with-gap"
-                    name="group1"
-                    type="radio"
-                  />
-                  <span>Electrical</span>
-                </label>
-              </p>
-              <p>
-                <label>
-                  <input className="with-gap" name="group1" type="radio" />
-                  <span>Plumbing</span>
-                </label>
-              </p>
-              <p>
-                <label>
-                  <input
-                    className="with-gap"
-                    class="with-gap"
-                    name="group1"
-                    type="radio"
-                  />
-                  <span>IT</span>
-                </label>
-              </p>
-              <p>
-                <label>
-                  <input className="with-gap" name="group1" type="radio" />
-                  <span>Structural</span>
-                </label>
-              </p>
-              <p>
-                <label>
-                  <input className="with-gap" name="group1" type="radio" />
-                  <span>Cleanup</span>
-                </label>
-              </p>
-              <p>
-                <label>
-                  <input className="with-gap" name="group1" type="radio" />
-                  <span>Other</span>
-                </label>
-              </p>
+              {types.map((t) => (
+                 <p key={t.id}>
+                 <label>
+                   <input
+                     className="with-gap"
+                     name="group1"
+                     type="radio"
+                     onChange={() => changed(t.type)}
+                     required
+                   />
+                   <span>{t.type}</span>
+                 </label>
+               </p>       
+              ))}
             </form>
           </section>
         </div>
