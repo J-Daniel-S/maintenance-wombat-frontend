@@ -31,6 +31,7 @@ const Locations = (props) => {
                   <input
                     className="with-gap"
                     name="group1"
+                    tag="radios"
                     type="radio"
                     onChange={() => changed(l.location)}
                     required

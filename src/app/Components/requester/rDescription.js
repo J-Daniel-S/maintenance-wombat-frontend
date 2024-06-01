@@ -7,6 +7,10 @@ const Description = (props) => {
     M.CharacterCounter.init(document.querySelectorAll('.materialize-textarea'));
   }, []);
 
+  const clear = () => {
+    props.setDescriptionState("");
+  }
+
   return (
     <React.Fragment>
         <form className="col s12">
@@ -17,7 +21,7 @@ const Description = (props) => {
             </div>
           </div>
         </form>
-        <a className="right clear-button" onClick={props.clear}>Clear</a>
+        <a className="right clear-button" onClick={clear}>Clear</a>
     </React.Fragment>
   );
 };

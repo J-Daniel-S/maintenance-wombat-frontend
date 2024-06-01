@@ -5,6 +5,7 @@ import M from "materialize-css";
 import styles from "./page.module.css";
 import Maintainer from "./Pages/maintainer";
 import Requester from "./Pages/requester";
+import Login from "./Pages/login";
 import Header from "./Components/header";
 import "../../node_modules/materialize-css/dist/css/materialize.css";
 import "materialize-css/dist/js/materialize.js";
@@ -12,12 +13,15 @@ import "materialize-css/dist/js/materialize.js";
 const Home = () => {
   // set false for standard users, true for maintenance personnel
   const WS_URL = "wss://ws.postman-echo.com/raw";
-  const [maintainerState, setMaintainerState] = useState(false);
+  const [loginState, setLoginState] = useState(true);
+  const [maintainerState, setMaintainerState] = useState(true);
   const [initialState, setInitialState] = useState(true);
   const [socketState, setSocketState] = useState();
   const [messageState, setMessageState] = useState([]);
   const [categoryState, setCategoryState] = useState("");
   const [locationState, setLocationState] = useState("");
+  const [usernameState, setUsernameState] = useState("");
+  const [passwordState, setPasswordState] = useState("");
 
   useEffect(() => {
     document.title = "Maintenance Wombat";
@@ -41,7 +45,6 @@ const Home = () => {
     socket.addEventListener("error", (event) => {
       console.error("WebSocket error:", event);
     });
-
   }, [locationState, categoryState]);
 
   const switchUser = () => {
@@ -49,8 +52,24 @@ const Home = () => {
     setMaintainerState(!maintainerState);
   };
 
+  const updateUsernameText = (event) => {
+    setUsernameState(event.target.value);
+  };
+
+  const updatePasswordText = (event) => {
+    setPasswordState(event.target.value);
+  };
+
+  const login = () => {
+    if (usernameState !== "" && passwordState !== "")
+      setLoginState(false);
+    else 
+      M.toast({html: "Enter some creds!"});
+  };
+
   const logout = () => {
-    M.toast({ html: "logout!" });
+    setLoginState(true);
+    window.location.reload();
   };
 
   return (
@@ -62,23 +81,43 @@ const Home = () => {
         setCategoryState={setCategoryState}
         locationState={locationState}
         categoryState={categoryState}
+        loginState={loginState}
       />
-      {maintainerState ? (
-        <Maintainer
-          socket={socketState}
-          messageState={messageState}
-          locationState={locationState}
-          categoryState={categoryState}
+      {loginState && (
+        <Login
+          updateUsernameText={updateUsernameText}
+          updatePasswordText={updatePasswordText}
+          usernameState={usernameState}
+          passwordState={passwordState}
         />
-      ) : (
-        <Requester socket={socketState} />
       )}
-      <a
-        onClick={() => logout()}
-        className="waves-effect waves-teal btn-flat logout-button"
-      >
-        Logout
-      </a>
+      {!loginState &&
+        (maintainerState ? (
+          <Maintainer
+            socket={socketState}
+            messageState={messageState}
+            locationState={locationState}
+            categoryState={categoryState}
+          />
+        ) : (
+          <Requester socket={socketState} />
+        ))}
+      {loginState && (
+        <a
+          onClick={() => login()}
+          className="waves-effect waves-teal btn-flat logout-button"
+        >
+          Login
+        </a>
+      )}
+      {!loginState && (
+        <a
+          onClick={() => logout()}
+          className="waves-effect waves-teal btn-flat logout-button"
+        >
+          Logout
+        </a>
+      )}
     </main>
   );
 };

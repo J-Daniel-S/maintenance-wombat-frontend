@@ -14,18 +14,12 @@ const Maintainer = (props) => {
   const [filteredState, setFilteredState] = useState([]);
 
   window.onload = function () {
-    const r0 =
-      "ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Posuere lorem ipsum dolor sit amet consectetur adipiscing elit duis. Neque laoreet suspendisse interdum consectetur libero id faucibus.";
-    const r1 = "Lubbock " + r0;
-    const r2 = "San Antonio " + r0;
-    const r3 = "Houston " + r0;
-
+    // temp
     const requests = [
       {
         id: 1,
         location: "Lubbock",
-        task: "task",
-        description: r1,
+        task: "Clean out the gutters.",
         priority: "low",
         type: "plumbing",
         isSelected: false,
@@ -33,8 +27,7 @@ const Maintainer = (props) => {
       {
         id: 2,
         location: "San Antonio",
-        task: "task",
-        description: r2,
+        task: "Get those gutters clean",
         priority: "low",
         type: "other",
         isSelected: false,
@@ -42,8 +35,7 @@ const Maintainer = (props) => {
       {
         id: 3,
         location: "Sugarland",
-        task: "task",
-        description: r3,
+        task: "Them gutters need help",
         priority: "medium",
         type: "electrical",
         isSelected: false,
@@ -106,12 +98,13 @@ const Maintainer = (props) => {
       type: "addorupdate",
     };
     const toSend = JSON.stringify(task);
+    // to replace with "receive and update" when connected to backend
     removeTask();
     props.socket.send(toSend);
   };
 
   const removeTask = () => {
-    return new Promise((resolve, reject) => { // remove if unnecessary once backend is connected, currently unnecessary
+    return new Promise((resolve, reject) => {
       const temp = tasksState.map((task) => ({...task}));
       const index = temp.findIndex((task) => task.id == taskState.id);
       let removed;

@@ -26,6 +26,7 @@ const Priority = (props) => {
                    <input
                      className="with-gap"
                      name="group1"
+                     tag="radios"
                      type="radio"
                      onChange={() => onChange(p.prio)}
                      required

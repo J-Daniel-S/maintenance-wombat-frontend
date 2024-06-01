@@ -4,7 +4,7 @@ const Description = (props) => {
     return(
         <React.Fragment>
             <blockquote>
-                {props.description}
+                {props.task}
             </blockquote>
         </React.Fragment>
     );

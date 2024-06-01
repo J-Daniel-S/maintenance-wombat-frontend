@@ -42,7 +42,7 @@ const Requester = (props) => {
         kind: typeState,
         location: locationState,
       },
-      type: "addorupdate",
+      type: "delete",
     };
 
     props.socket.send(JSON.stringify(request));
@@ -61,6 +61,7 @@ const Requester = (props) => {
           <Description
             updateDescriptionText={updateDescriptionText}
             description={descriptionState}
+            setDescriptionState={setDescriptionState}
           />
         </article>
         <article className="row">
@@ -84,15 +85,6 @@ const Requester = (props) => {
               Submit
             </button>
           )}
-          {/* <button
-            className="btn waves-effect waves-light blue hoverable"
-            type="submit"
-            name="action"
-            onClick={() => submit()}
-            
-          >
-            Submit
-          </button> */}
         </article>
       </main>
     </React.Fragment>
