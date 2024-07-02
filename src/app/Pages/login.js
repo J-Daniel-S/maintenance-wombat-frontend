@@ -1,7 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 const Login = (props) => {
-  useEffect(() => {}, []);
+ const loginRef = useRef(null);
+  
+  useEffect(() => {
+    const ele = loginRef.current;
+    if (ele) 
+      ele.focus();
+  }, []);
 
   return (
     <React.Fragment>
@@ -10,6 +16,7 @@ const Login = (props) => {
           <div className="row">
             <div className="input-field col s12">
               <input
+                ref={loginRef}
                 placeholder="some-email@company.com"
                 id="username"
                 type="text"
