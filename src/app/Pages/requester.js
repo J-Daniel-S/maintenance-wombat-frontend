@@ -13,6 +13,7 @@ const Requester = (props) => {
   const [buttonState, setButtonState] = useState(false);
 
   useEffect(() => {
+    document.body.style.cursor = 'default';
     if (!(prioState === "" || typeState === "" || locationState === "" || descriptionState.length === 0)) {
       setButtonState(true);
     }

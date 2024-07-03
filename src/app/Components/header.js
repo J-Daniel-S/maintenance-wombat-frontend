@@ -41,9 +41,6 @@ const Header = (props) => {
     }
   };
 
-  const switchUser = () => {
-    props.switchUser();
-  };
   //  Need to add functionality that receives all locations from the backend
   const locations = [
     { location: "San Antonio", id: 1 },
@@ -113,9 +110,6 @@ const Header = (props) => {
             <a className="brand-logo">Submit Maintenance Request</a>
           )}
           <ul className="right hide-on-med-and-down">
-            <li>
-              <a onClick={switchUser}>Switch user</a>
-            </li>
             {!props.loginState && props.maintainerState && (
               <React.Fragment>
                 <li>

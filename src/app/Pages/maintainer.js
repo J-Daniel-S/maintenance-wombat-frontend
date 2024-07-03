@@ -12,6 +12,7 @@ const Maintainer = (props) => {
   // will use when real websocket is used
   const [prevTasksState, setPrevState] = useState([]);
   const [filteredState, setFilteredState] = useState([]);
+  const [initialRequestState, setInitialRequestState] = useState(false);
 
   window.onload = function () {
     // temp
@@ -46,6 +47,7 @@ const Maintainer = (props) => {
   };
 
   useEffect(() => {
+    document.body.style.cursor = 'default';
     setFilteredState(tasksState);
 
     if (props.locationState !== '') {
@@ -55,6 +57,13 @@ const Maintainer = (props) => {
     if (props.categoryState !== '') {
       setFilteredState(filteredState.filter((task) => task.category === props.categoryState));
     }
+    
+    if (initialRequestState === false) {
+      props.getTasks();
+      setInitialRequestState(true);
+    }
+
+    
 
   }, [props.messageState, tasksState, props.locationState, props.categoryState]);
 
