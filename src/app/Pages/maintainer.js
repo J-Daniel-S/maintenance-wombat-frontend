@@ -8,64 +8,28 @@ const Maintainer = (props) => {
   const [textState, setTextState] = useState("");
   const [taskState, setTask] = useState("");
   const [selectedState, setSelectedState] = useState(false);
-  const [tasksState, setTasksState] = useState([]);
-  // will use when real websocket is used
   const [prevTasksState, setPrevState] = useState([]);
   const [filteredState, setFilteredState] = useState([]);
-  const [initialRequestState, setInitialRequestState] = useState(false);
-
-  window.onload = function () {
-    // temp
-    const requests = [
-      {
-        id: 1,
-        location: "Lubbock",
-        task: "Clean out the gutters.",
-        priority: "low",
-        type: "plumbing",
-        isSelected: false,
-      },
-      {
-        id: 2,
-        location: "San Antonio",
-        task: "Get those gutters clean",
-        priority: "low",
-        type: "other",
-        isSelected: false,
-      },
-      {
-        id: 3,
-        location: "Sugarland",
-        task: "Them gutters need help",
-        priority: "medium",
-        type: "electrical",
-        isSelected: false,
-      },
-    ];
-
-    setTasksState(requests);
-  };
-
+  
   useEffect(() => {
     document.body.style.cursor = 'default';
-    setFilteredState(tasksState);
+    setFilteredState(props.tasksState);
 
     if (props.locationState !== '') {
-      setFilteredState(tasksState.filter((task) => task.location === props.locationState));
+      setFilteredState(props.tasksState.filter((task) => task.location === props.locationState));
     }
 
     if (props.categoryState !== '') {
       setFilteredState(filteredState.filter((task) => task.category === props.categoryState));
     }
     
-    if (initialRequestState === false) {
+    if (props.initialRequestState === false) {
       props.getTasks();
-      setInitialRequestState(true);
+      props.setInitialRequestState(true);
     }
 
-    
 
-  }, [props.messageState, tasksState, props.locationState, props.categoryState]);
+  }, [props.messageState, props.tasksState, props.locationState, props.categoryState]);
 
   const handleChange = (e) => {
     if (socket.readyState === WebSocket.OPEN) {
@@ -79,7 +43,7 @@ const Maintainer = (props) => {
   const taskSelected = (t) => {
     setSelectedState(true);
     setTask(t);
-    tasksState.forEach((task) => {
+    props.tasksState.forEach((task) => {
       if (task.id === t.id) {
         task.isSelected = true;
       }
@@ -89,11 +53,11 @@ const Maintainer = (props) => {
   const clearSelection = () => {
     setSelectedState(false);
     setTask("");
-    const temp = tasksState.map((task) => ({...task}));
+    const temp = props.tasksState.map((task) => ({...task}));
     temp.forEach((element) => {
       element.isSelected = false;
     });
-    setTasksState(temp);
+    props.setTasksState(temp);
   };
 
   const submit = () => {
@@ -114,13 +78,13 @@ const Maintainer = (props) => {
 
   const removeTask = () => {
     return new Promise((resolve, reject) => {
-      const temp = tasksState.map((task) => ({...task}));
+      const temp = props.tasksState.map((task) => ({...task}));
       const index = temp.findIndex((task) => task.id == taskState.id);
       let removed;
       if (index !== -1) {
         removed = temp.splice(index, 1);
         clearSelection();
-        setTasksState(temp);
+        props.setTasksState(temp);
       }
       resolve();
     });

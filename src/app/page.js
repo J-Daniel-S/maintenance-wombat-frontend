@@ -25,6 +25,8 @@ const Home = () => {
   const [usernameState, setUsernameState] = useState("");
   const [passwordState, setPasswordState] = useState("");
   const [userState, setUserState] = useState();
+  const [tasksState, setTasksState] = useState([]);
+  const [initialMaintenanceRequestState, setMaintenanceInitialRequestState] = useState(false);
 
   const userSocketRef = useRef(null);
   const taskSocketRef = useRef(null);
@@ -33,6 +35,7 @@ const Home = () => {
   const hasTaskSocketBeenSetUp = useRef(false);
   const usernameRef = useRef("");
   const passwordRef = useRef("");
+  const tasksRef = useRef([]);
 
   useEffect(() => {
     document.title = "Maintenance Wombat";
@@ -119,6 +122,7 @@ const Home = () => {
 
           // console.log(JSON.stringify(user));
           userSocketRef.current.send(JSON.stringify(user));
+          userSocketRef.close();
         } else {
           userSocketRef.current.addEventListener("open", () => {
             document.body.style.cursor = 'wait';
@@ -131,9 +135,25 @@ const Home = () => {
     }
   };
 
+  // Edits the location string to normal formatting
+  const fixLocation = loc => {
+    let string = '';
+    for (let c of loc) {
+      let ch = c.toLowerCase();
+      string += ch;
+    }
+    return string.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  };
+
+  const processTaskMessage = tasks => {
+    tasks.map(t => t.location = fixLocation(t.location));
+
+
+    // return editedTasks;
+  };
+
   const setupTaskSocket =() => {
     if (!hasTaskSocketBeenSetUp.current) {
-      console.log("setupTaskSocket run if evalutes false")
       const socket = new WebSocket(TASK_WS_URL);
       taskSocketRef.current = socket;
       hasTaskSocketBeenSetUp.current = true;
@@ -145,7 +165,9 @@ const Home = () => {
       socket.addEventListener("message", (event) => {
         setTaskMessageState((prevMessages) => [...prevMessages, event.data]);
         let response = JSON.parse(event.data);
-        console.log(response);
+        // console.log(event.data)
+        processTaskMessage(response)
+        tasksRef.current = [...response];
 
         // TODO add logic to process response
 
@@ -167,6 +189,7 @@ const Home = () => {
     setupTaskSocket();
     /*
       TODO - update socket on the backend to send a bad request response if an error is thrown
+      change response: add 'status' with number and change 'message' to an explanation
     */
     let request = {
       task: {
@@ -180,7 +203,6 @@ const Home = () => {
 
     if (taskSocketRef.current) {
       if (taskSocketRef.current.readyState === WebSocket.OPEN) {
-        // console.log("request:\n" + JSON.stringify(request));
         taskSocketRef.current.send(JSON.stringify(request));
       
       } else {
@@ -226,6 +248,10 @@ const Home = () => {
             locationState={locationState}
             categoryState={categoryState}
             getTasks={getTasks}
+            tasksState={tasksRef.current}
+            setTasksState={setTasksState}
+            initialRequestState={initialMaintenanceRequestState}
+            setInitialRequestState={setMaintenanceInitialRequestState}
           />
         ) : (
           <Requester socket={taskSocketRef.current} />
