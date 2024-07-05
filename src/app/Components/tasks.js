@@ -5,10 +5,7 @@ const Tasks = (props) => {
 
     // have to edit tasks so they display properly
   }
-
-    
-
-  , [props.setSelected]);
+  , [props.setSelected, props.task]);
   
   const clicked = t => {
     props.setSelected(t);
@@ -21,11 +18,10 @@ const Tasks = (props) => {
       {props.tasks.length !== 0 ? props.tasks.map((t) => (
         <a
           key={t.id}
-          className={t.isSelected ? "collection-item a-badge amber lighten-5" : "collection-item a-badge" }
+          className={props.selectedTaskId === t.id ? "collection-item a-badge amber lighten-5" : "collection-item a-badge" }
           onClick={() => clicked(t)}
         >
-          {props.isNew && <span className="new badge amber">New!</span>}
-          {t.location} : {t.name}
+          {t.location} : {t.name} <span className="badge">{t.kind}</span>
         </a>
       )): <a className= "collection-item a-badge">No tasks meet selected criteria</a>}
     </main>

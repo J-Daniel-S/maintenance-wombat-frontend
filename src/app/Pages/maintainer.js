@@ -6,7 +6,8 @@ import Description from "../Components/maintainer/mDescription";
 
 const Maintainer = (props) => {
   const [textState, setTextState] = useState("");
-  const [taskState, setTask] = useState("");
+  const [taskState, setTask] = useState(null);
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [selectedState, setSelectedState] = useState(false);
   const [prevTasksState, setPrevState] = useState([]);
   const [filteredState, setFilteredState] = useState([]);
@@ -19,8 +20,10 @@ const Maintainer = (props) => {
       setFilteredState(props.tasksState.filter((task) => task.location === props.locationState));
     }
 
+    let category = props.categoryState
+
     if (props.categoryState !== '') {
-      setFilteredState(filteredState.filter((task) => task.category === props.categoryState));
+      setFilteredState(filteredState.filter((task) => task.kind === category.toUpperCase()));
     }
     
     if (props.initialRequestState === false) {
@@ -48,35 +51,40 @@ const Maintainer = (props) => {
         task.isSelected = true;
       }
     });
+    setSelectedTaskId(t.id);
   };
 
   const clearSelection = () => {
     setSelectedState(false);
-    setTask("");
+    setTask(null);
     const temp = props.tasksState.map((task) => ({...task}));
-    temp.forEach((element) => {
-      element.isSelected = false;
+    temp.forEach((t) => {
+      t.isSelected = false;
     });
-    props.setTasksState(temp);
+    // props.setTasksState(temp);
+    setSelectedTaskId(null);
   };
 
   const submit = () => {
     let task = {
       task: {
-        name: taskState.task,
+        id: taskState.id,
+        name: taskState.name,
         prio: taskState.priority,
-        kind: taskState.type,
+        kind: taskState.kind,
         location: taskState.location,
       },
-      type: "addorupdate",
+      type: "delete",
     };
     const toSend = JSON.stringify(task);
+    console.log(toSend);
     // to replace with "receive and update" when connected to backend
-    removeTask();
+    // removeTask();
     props.socket.send(toSend);
   };
 
   const removeTask = () => {
+    // TODO: REPLACE WITH A CALL TO THE BACKEND TO DELETE THE TASK
     return new Promise((resolve, reject) => {
       const temp = props.tasksState.map((task) => ({...task}));
       const index = temp.findIndex((task) => task.id == taskState.id);
@@ -94,7 +102,7 @@ const Maintainer = (props) => {
     <React.Fragment>
       <section className="container">
         <section>
-          <Tasks setSelected={taskSelected} tasks={filteredState} />
+          <Tasks setSelected={taskSelected} tasks={filteredState} task={taskState} selectedTaskId={selectedTaskId} />
         </section>
         {selectedState && (
           <div className="fade-in">

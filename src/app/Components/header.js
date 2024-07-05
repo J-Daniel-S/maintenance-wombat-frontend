@@ -19,11 +19,10 @@ const Header = (props) => {
     return () => {
       destroyDropdowns();
     };
-  }, [props.maintainerState]);
+  }, [props.maintainerState, props.loginState]);
 
   const initializeDropdowns = () => {
     destroyDropdowns();
-
     const locationElems = M.Dropdown.init(locationDropdownRef.current, {});
     setLocationDropdown(locationElems);
     const categoryElems = M.Dropdown.init(categoryDropdownRef.current, {});
@@ -42,7 +41,8 @@ const Header = (props) => {
   };
 
   //  Need to add functionality that receives all locations from the backend
-  const locations = [
+  //  I might leave as is
+  const locations = props.locationState === '' ? [
     { location: "San Antonio", id: 1 },
     { location: "Fort Worth", id: 2 },
     { location: "Abilene", id: 3 },
@@ -50,16 +50,16 @@ const Header = (props) => {
     { location: "Amarillo", id: 5 },
     { location: "McAllen", id: 6 },
     { location: "Sugarland", id: 7 },
-  ];
+  ] : [];
   // ditto for categories
-  const categories = [
+  const categories = props.categoryState === '' ? [
     { category: "Electrical", id: 1 },
     { category: "Plumbing", id: 3 },
     { category: "IT", id: 4 },
     { category: "Structural", id: 5 },
     { category: "Cleanup", id: 6 },
     { category: "Other", id: 7 },
-  ];
+  ] : [];
 
   const categoryClicked = (c) => {
     props.setCategoryState(c.category);

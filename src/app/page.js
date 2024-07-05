@@ -122,7 +122,7 @@ const Home = () => {
 
           // console.log(JSON.stringify(user));
           userSocketRef.current.send(JSON.stringify(user));
-          userSocketRef.close();
+          userSocketRef.current.close();
         } else {
           userSocketRef.current.addEventListener("open", () => {
             document.body.style.cursor = 'wait';
@@ -142,14 +142,14 @@ const Home = () => {
       let ch = c.toLowerCase();
       string += ch;
     }
+    // this line of code may need updated if new locations are added
+    if (string.charAt(0) === 'm' && string.charAt(2) === 'a') string = 'mcAllen';
     return string.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   };
 
   const processTaskMessage = tasks => {
     tasks.map(t => t.location = fixLocation(t.location));
-
-
-    // return editedTasks;
+    console.log(tasks);
   };
 
   const setupTaskSocket =() => {
@@ -165,12 +165,8 @@ const Home = () => {
       socket.addEventListener("message", (event) => {
         setTaskMessageState((prevMessages) => [...prevMessages, event.data]);
         let response = JSON.parse(event.data);
-        // console.log(event.data)
         processTaskMessage(response)
         tasksRef.current = [...response];
-
-        // TODO add logic to process response
-
       });
 
       
@@ -249,7 +245,7 @@ const Home = () => {
             categoryState={categoryState}
             getTasks={getTasks}
             tasksState={tasksRef.current}
-            setTasksState={setTasksState}
+            // setTasksState={setTasksState}
             initialRequestState={initialMaintenanceRequestState}
             setInitialRequestState={setMaintenanceInitialRequestState}
           />
