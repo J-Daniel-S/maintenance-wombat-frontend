@@ -84,7 +84,7 @@ const Home = () => {
         setUserMessageState((prevMessages) => [...prevMessages, event.data]);
         let response = JSON.parse(event.data);
 
-        console.log(response);
+        console.log('Received - \n' + response);
         
         if (response.message !== '200') {
           if (response.message === '204') {
@@ -108,6 +108,11 @@ const Home = () => {
     }
   };
 
+  const sendUser = user => {
+      userSocketRef.current.send(JSON.stringify(user));
+      () => new setTimeout(M.Toast({ html: "Error reaching server.  Please contact administration"}), 10000);
+  }
+
   const login = () => {
     setupUsersocket();
     if (usernameState !== "" && passwordState !== "") {
@@ -119,14 +124,11 @@ const Home = () => {
         if (userSocketRef.current.readyState === WebSocket.OPEN) {
           if (userSocketRef) usernameRef.current = usernameState;
           passwordRef.current = passwordState;
-
-          // console.log(JSON.stringify(user));
-          userSocketRef.current.send(JSON.stringify(user));
-          userSocketRef.current.close();
+          sendUser(user);
         } else {
           userSocketRef.current.addEventListener("open", () => {
             document.body.style.cursor = 'wait';
-            userSocketRef.current.send(JSON.stringify(user));
+            sendUser(user);
           });
         }
       }
@@ -212,10 +214,8 @@ const Home = () => {
   };
 
   const logout = () => {
-    setLoginState(true);
-    setUserState(null);
-    setUsernameState('');
-    setPasswordState('');
+    document.body.style.cursor = 'wait';
+    window.location.reload();
   };
 
   return (
@@ -248,6 +248,7 @@ const Home = () => {
             // setTasksState={setTasksState}
             initialRequestState={initialMaintenanceRequestState}
             setInitialRequestState={setMaintenanceInitialRequestState}
+            userState={userState}
           />
         ) : (
           <Requester socket={taskSocketRef.current} />

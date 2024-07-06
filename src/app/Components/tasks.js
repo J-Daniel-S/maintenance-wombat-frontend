@@ -21,7 +21,7 @@ const Tasks = (props) => {
           className={props.selectedTaskId === t.id ? "collection-item a-badge amber lighten-5" : "collection-item a-badge" }
           onClick={() => clicked(t)}
         >
-          {t.location} : {t.name} <span className="badge">{t.kind}</span>
+          {t.location} : {t.name} <span className="badge">{t.kind}: Priority {t.prio}</span>
         </a>
       )): <a className= "collection-item a-badge">No tasks meet selected criteria</a>}
     </main>

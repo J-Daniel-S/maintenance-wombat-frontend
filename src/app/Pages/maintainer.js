@@ -75,6 +75,7 @@ const Maintainer = (props) => {
         location: taskState.location,
       },
       type: "delete",
+      maintenanceUser: props.userState.name,
     };
     const toSend = JSON.stringify(task);
     console.log(toSend);
