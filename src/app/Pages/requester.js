@@ -43,8 +43,11 @@ const Requester = (props) => {
         kind: typeState,
         location: locationState,
       },
-      type: "delete",
+      type: "addorupdate",
+      requestingUser: props.userState.name,
     };
+
+    console.log(JSON.stringify(request));
 
     props.socket.send(JSON.stringify(request));
     clearAll();

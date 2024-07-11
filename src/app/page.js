@@ -16,8 +16,6 @@ const Home = () => {
   const WS_URL = "ws://localhost:8080/wombat-users";
   const [loginState, setLoginState] = useState(true);
   const [maintainerState, setMaintainerState] = useState(true);
-  const [initialState, setInitialState] = useState(true);
-  const [socketState, setSocketState] = useState();
   const [userMessageState, setUserMessageState] = useState([]);
   const [taskMessageState, setTaskMessageState] = useState([]);
   const [categoryState, setCategoryState] = useState("");
@@ -25,7 +23,6 @@ const Home = () => {
   const [usernameState, setUsernameState] = useState("");
   const [passwordState, setPasswordState] = useState("");
   const [userState, setUserState] = useState();
-  const [tasksState, setTasksState] = useState([]);
   const [initialMaintenanceRequestState, setMaintenanceInitialRequestState] = useState(false);
 
   const userSocketRef = useRef(null);
@@ -50,7 +47,7 @@ const Home = () => {
     }
     
     const handleKeyDown = (event) => {
-      if (event.key === "Enter") {
+      if (event.key === "Enter" && loginButtonRef.current !== null) {
         loginButtonRef.current.click();
       }
     };
@@ -84,7 +81,7 @@ const Home = () => {
         setUserMessageState((prevMessages) => [...prevMessages, event.data]);
         let response = JSON.parse(event.data);
 
-        console.log('Received - \n' + response);
+        console.log('Received - \n' + JSON.stringify(response));
         
         if (response.message !== '200') {
           if (response.message === '204') {
@@ -95,6 +92,9 @@ const Home = () => {
           }
         } else {
           setUserState(response.user);
+          if (response.user.userType === 'STANDARD') {
+            setupTaskSocket();
+          }
         }
       });
 
@@ -110,6 +110,7 @@ const Home = () => {
 
   const sendUser = user => {
       userSocketRef.current.send(JSON.stringify(user));
+      console.log(user.userType);
       () => new setTimeout(M.Toast({ html: "Error reaching server.  Please contact administration"}), 10000);
   }
 
@@ -245,13 +246,12 @@ const Home = () => {
             categoryState={categoryState}
             getTasks={getTasks}
             tasksState={tasksRef.current}
-            // setTasksState={setTasksState}
             initialRequestState={initialMaintenanceRequestState}
             setInitialRequestState={setMaintenanceInitialRequestState}
             userState={userState}
           />
         ) : (
-          <Requester socket={taskSocketRef.current} />
+          <Requester socket={taskSocketRef.current} userState={userState} />
         ))}
       {loginState && (
         <a
