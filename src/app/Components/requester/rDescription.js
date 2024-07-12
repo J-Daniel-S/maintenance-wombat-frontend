@@ -4,7 +4,6 @@ import M from "materialize-css";
 const Description = (props) => {
 
   useEffect(() => {
-    M.CharacterCounter.init(document.querySelectorAll('.materialize-textarea'));
   }, []);
 
   const clear = () => {

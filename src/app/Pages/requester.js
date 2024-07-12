@@ -4,13 +4,16 @@ import Locations from "../Components/requester/locations";
 import Type from "../Components/requester/type";
 import Priority from "../Components/requester/priority";
 import Description from "../Components/requester/rDescription";
+import M from "materialize-css";
 
 const Requester = (props) => {
   const [descriptionState, setDescriptionState] = useState("");
+  const [prevDescriptionState, setPrevDescriptionState] = useState("");
   const [typeState, setTypeState] = useState("");
   const [locationState, setLocationState] = useState("");
   const [prioState, setPrioState] = useState("");
   const [buttonState, setButtonState] = useState(false);
+  const [initialLengthWarning, setInitialLengthWarning] = useState(true);
 
   useEffect(() => {
     document.body.style.cursor = 'default';
@@ -20,7 +23,17 @@ const Requester = (props) => {
   }, [prioState, locationState, typeState, descriptionState]);
 
   const updateDescriptionText = (event) => {
-    setDescriptionState(event.target.value);
+    if (descriptionState.length <= 50) {
+      setPrevDescriptionState(descriptionState);
+      setDescriptionState(event.target.value);
+    } else {
+      setDescriptionState(prevDescriptionState);
+      if (initialLengthWarning) {
+        M.toast({ html: 'Max length 50 characters' });
+        setInitialLengthWarning(false);
+      }
+    } 
+
   };
 
   const clearAll = () => {
@@ -31,11 +44,6 @@ const Requester = (props) => {
   }
 
   const submit = () => {
-    if (descriptionState.length > 50) {
-      M.toast({ html: "Description is too long" });
-      return;
-    }
-
     const request = {
       task: {
         name: descriptionState,

@@ -1,29 +1,28 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import M from "materialize-css";
 import styles from "./page.module.css";
 import Maintainer from "./Pages/maintainer";
 import Requester from "./Pages/requester";
 import Login from "./Pages/login";
 import Header from "./Components/header";
+import M from "materialize-css";
 import "../../node_modules/materialize-css/dist/css/materialize.css";
 import "materialize-css/dist/js/materialize.js";
 
 const Home = () => {
-  // set false for standard users, true for maintenance personnel
   const TASK_WS_URL = "ws://localhost:8080/maintenance-wombat";
   const WS_URL = "ws://localhost:8080/wombat-users";
   const [loginState, setLoginState] = useState(true);
   const [maintainerState, setMaintainerState] = useState(true);
   const [userMessageState, setUserMessageState] = useState([]);
   const [taskMessageState, setTaskMessageState] = useState([]);
-  const [categoryState, setCategoryState] = useState("");
   const [locationState, setLocationState] = useState("");
   const [usernameState, setUsernameState] = useState("");
   const [passwordState, setPasswordState] = useState("");
   const [userState, setUserState] = useState();
-  const [initialMaintenanceRequestState, setMaintenanceInitialRequestState] = useState(false);
+  const [initialMaintenanceRequestState, setMaintenanceInitialRequestState] =
+    useState(false);
 
   const userSocketRef = useRef(null);
   const taskSocketRef = useRef(null);
@@ -35,17 +34,15 @@ const Home = () => {
   const tasksRef = useRef([]);
 
   useEffect(() => {
-    document.title = "Maintenance Wombat";
-
     if (userState) {
-      if (userState.userType === 'MAINTENANCE') {
+      if (userState.userType === "MAINTENANCE") {
         setMaintainerState(true);
       } else {
         setMaintainerState(false);
       }
       setLoginState(false); // Set login state to false after successful login
     }
-    
+
     const handleKeyDown = (event) => {
       if (event.key === "Enter" && loginButtonRef.current !== null) {
         loginButtonRef.current.click();
@@ -81,10 +78,10 @@ const Home = () => {
         setUserMessageState((prevMessages) => [...prevMessages, event.data]);
         let response = JSON.parse(event.data);
 
-        console.log('Received - \n' + JSON.stringify(response));
-        
-        if (response.message !== '200') {
-          if (response.message === '204') {
+        console.log("Received - \n" + JSON.stringify(response));
+
+        if (response.message !== "200") {
+          if (response.message === "204") {
             let message = `User ` + usernameState + ` does not exist!`;
             M.toast({ html: message });
           } else {
@@ -92,7 +89,7 @@ const Home = () => {
           }
         } else {
           setUserState(response.user);
-          if (response.user.userType === 'STANDARD') {
+          if (response.user.userType === "STANDARD") {
             setupTaskSocket();
           }
         }
@@ -108,11 +105,17 @@ const Home = () => {
     }
   };
 
-  const sendUser = user => {
-      userSocketRef.current.send(JSON.stringify(user));
-      console.log(user.userType);
-      () => new setTimeout(M.Toast({ html: "Error reaching server.  Please contact administration"}), 10000);
-  }
+  const sendUser = (user) => {
+    userSocketRef.current.send(JSON.stringify(user));
+    console.log(user.userType);
+    () =>
+      new setTimeout(
+        M.Toast({
+          html: "Error reaching server.  Please contact administration",
+        }),
+        10000
+      );
+  };
 
   const login = () => {
     setupUsersocket();
@@ -128,7 +131,7 @@ const Home = () => {
           sendUser(user);
         } else {
           userSocketRef.current.addEventListener("open", () => {
-            document.body.style.cursor = 'wait';
+            document.body.style.cursor = "wait";
             sendUser(user);
           });
         }
@@ -139,23 +142,24 @@ const Home = () => {
   };
 
   // Edits the location string to normal formatting
-  const fixLocation = loc => {
-    let string = '';
+  const fixLocation = (loc) => {
+    let string = "";
     for (let c of loc) {
       let ch = c.toLowerCase();
       string += ch;
     }
     // this line of code may need updated if new locations are added
-    if (string.charAt(0) === 'm' && string.charAt(2) === 'a') string = 'mcAllen';
-    return string.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    if (string.charAt(0) === "m" && string.charAt(2) === "a")
+      string = "mcAllen";
+    return string.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   };
 
-  const processTaskMessage = tasks => {
-    tasks.map(t => t.location = fixLocation(t.location));
+  const processTaskMessage = (tasks) => {
+    tasks.map((t) => (t.location = fixLocation(t.location)));
     console.log(tasks);
   };
 
-  const setupTaskSocket =() => {
+  const setupTaskSocket = () => {
     if (!hasTaskSocketBeenSetUp.current) {
       const socket = new WebSocket(TASK_WS_URL);
       taskSocketRef.current = socket;
@@ -168,11 +172,10 @@ const Home = () => {
       socket.addEventListener("message", (event) => {
         setTaskMessageState((prevMessages) => [...prevMessages, event.data]);
         let response = JSON.parse(event.data);
-        processTaskMessage(response)
+        processTaskMessage(response);
         tasksRef.current = [...response];
       });
 
-      
       socket.addEventListener("error", (event) => {
         console.error("Task Socket Error:", event);
       });
@@ -180,9 +183,8 @@ const Home = () => {
       return () => {
         socket.close();
       };
-
     }
-  }
+  };
 
   const getTasks = () => {
     setupTaskSocket();
@@ -195,40 +197,45 @@ const Home = () => {
         name: "request",
         prio: "low",
         location: "san antonio",
-        kind: "other"
+        kind: "other",
       },
-      type: "getall"
-    }
+      type: "getall",
+    };
 
     if (taskSocketRef.current) {
       if (taskSocketRef.current.readyState === WebSocket.OPEN) {
         taskSocketRef.current.send(JSON.stringify(request));
-      
       } else {
         taskSocketRef.current.addEventListener("open", () => {
           taskSocketRef.current.send(JSON.stringify(request));
         });
       }
-
     }
-
   };
 
   const logout = () => {
-    document.body.style.cursor = 'wait';
-    window.location.reload();
+    setLoginState(true);
+    setMaintainerState(true);
+    setUserMessageState([]);
+    setTaskMessageState([]);
+    setLocationState("");
+    setUsernameState("");
+    setPasswordState("");
+    setUserState();
+    setMaintenanceInitialRequestState(false);
+
+    hasSocketBeenSetUp.current = false;
+    hasTaskSocketBeenSetUp.current = false;
+    userSocketRef.current = null;
+    taskSocketRef.current = null;
+    usernameRef.current = "";
+    passwordRef.current = "";
+    tasksRef.current = [];
   };
 
   return (
     <main className={styles.main}>
-      <Header
-        maintainerState={maintainerState}
-        setLocationState={setLocationState}
-        setCategoryState={setCategoryState}
-        locationState={locationState}
-        categoryState={categoryState}
-        loginState={loginState}
-      />
+      <Header maintainerState={maintainerState} loginState={loginState} />
       {loginState && (
         <Login
           updateUsernameText={updateUsernameText}
@@ -243,12 +250,12 @@ const Home = () => {
             socket={taskSocketRef.current}
             messageState={taskMessageState}
             locationState={locationState}
-            categoryState={categoryState}
             getTasks={getTasks}
             tasksState={tasksRef.current}
             initialRequestState={initialMaintenanceRequestState}
             setInitialRequestState={setMaintenanceInitialRequestState}
             userState={userState}
+            setLocationState={setLocationState}
           />
         ) : (
           <Requester socket={taskSocketRef.current} userState={userState} />

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import dynamic from 'next/dynamic';
 import M from "materialize-css";
 
 const Header = (props) => {
@@ -15,30 +16,8 @@ const Header = (props) => {
     : "blue-text text-darken-2";
 
   useEffect(() => {
-    initializeDropdowns();
-    return () => {
-      destroyDropdowns();
-    };
+
   }, [props.maintainerState, props.loginState]);
-
-  const initializeDropdowns = () => {
-    destroyDropdowns();
-    const locationElems = M.Dropdown.init(locationDropdownRef.current, {});
-    setLocationDropdown(locationElems);
-    const categoryElems = M.Dropdown.init(categoryDropdownRef.current, {});
-    setCategoryDropdown(categoryElems);
-  };
-
-  const destroyDropdowns = () => {
-    if (locationDropdown) {
-      locationDropdown.destroy();
-      setLocationDropdown(null);
-    }
-    if (categoryDropdown) {
-      categoryDropdown.destroy();
-      setCategoryDropdown(null);
-    }
-  };
 
   //  Need to add functionality that receives all locations from the backend
   //  I might leave as is
@@ -81,26 +60,6 @@ const Header = (props) => {
 
   return (
     <React.Fragment>
-      <ul id="location-dropdown" className="dropdown-content">
-        <li onClick={() => allLocationsClicked()}>
-          <a className="header-button">All</a>
-        </li>
-        {locations.map((l) => (
-          <li key={l.id} onClick={() => locationClicked(l)}>
-            <a className="header-button">{l.location}</a>
-          </li>
-        ))}
-      </ul>
-      <ul id="category-dropdown" className="dropdown-content">
-        <li onClick={() => allCategoriesClicked()}>
-          <a className="header-button">All</a>
-        </li>
-        {categories.map((c) => (
-          <li key={c.id} onClick={() => categoryClicked(c)}>
-            <a className="header-button">{c.category}</a>
-          </li>
-        ))}
-      </ul>
       <nav>
         <div className={headerCss}>
           {props.loginState && <a className="brand-logo">Maintenance Wombat Login</a>}
@@ -109,30 +68,6 @@ const Header = (props) => {
           ) : (!props.loginState &&
             <a className="brand-logo">Submit Maintenance Request</a>
           )}
-          <ul className="right hide-on-med-and-down">
-            {!props.loginState && props.maintainerState && (
-              <React.Fragment>
-                <li>
-                  <a
-                    className={headerButtonClass}
-                    data-target="category-dropdown"
-                    ref={categoryDropdownRef}
-                  >
-                    {props.categoryState === "" ? 'View By Request Category' : ' - ' +  props.categoryState + ' - '}
-                  </a>
-                </li>
-                <li>
-                  <a
-                    className={headerButtonClass}
-                    data-target="location-dropdown"
-                    ref={locationDropdownRef}
-                  >
-                    {props.locationState === "" ? 'View By Location' : ' - ' + props.locationState + ' - '}
-                  </a>
-                </li>
-              </React.Fragment>
-            )}
-          </ul>
         </div>
       </nav>
     </React.Fragment>
